@@ -1,22 +1,37 @@
 ---
 - name: Deploy Docker Container
   hosts: localhost
+  
   tasks:
     - name: Install Docker.io
       apt:
         name: docker.io
         state: present
- 
+
     - name: Pull Apache Docker image
       docker_image:
         name: httpd
         source: pull
         state: present
- 
-    - name: Run Apache Docker container
+
+    - name: Check if Docker network exists
+      docker_network_info:
+          name: my_network
+      register: network_info
+
+    - name: Create Docker network with desired subnet if it doesn't exist
+      command: docker network create --driver=bridge --subnet=172.168.10.0/30 my_network
+      when: network_info == {}
+        
+    - name: Run Apache Docker container with mounted volume
       docker_container:
         name: apache_container
         image: httpd
         state: started
         published_ports:
           - "8080:80"
+        volumes:
+          - "file:///C:/Users/rizwana/OneDrive/Desktop/INDEX.HTML:/usr/local/apache2/htdocs"
+        networks:
+          - name: my_network
+            ipv4_address: 172.168.10.2
