@@ -34,4 +34,4 @@
           - "file:///C:/Users/rizwana/OneDrive/Desktop/INDEX.HTML:/usr/local/apache2/htdocs"
         networks:
           - name: my_network
-            ipv4_address: 172.168.10.2
+          # ipv4_address: 172.168.10.2
